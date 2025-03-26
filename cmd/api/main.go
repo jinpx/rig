@@ -20,3 +20,6 @@ func main() {
 	}
 
 }
+
+// mini_game
+// mini_admin
