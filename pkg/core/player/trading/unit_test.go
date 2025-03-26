@@ -32,9 +32,9 @@ func TestTrading(t *testing.T) {
 		isUp := rand.Intn(2)
 		fVal := rand.Float64()
 
-		change := -(0.10*fVal + 0.2) // 默认跌30%
+		change := -(0.05*fVal + 0.06) // 默认跌30%
 		if isUp == 1 {
-			change = 0.10*fVal + 0.2 // 涨30%
+			change = 0.05*fVal + 0.06 // 涨30%
 		}
 		newPrice := portfolio.price * (1 + change)
 
@@ -80,7 +80,7 @@ func TestTrading(t *testing.T) {
 		}
 
 		i++
-		time.Sleep(time.Second) // 暂停1秒
+		time.Sleep(time.Millisecond * 100) // 暂停1秒
 	}
 
 	// 输出最终结果
