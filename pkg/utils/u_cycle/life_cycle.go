@@ -5,8 +5,8 @@ import (
 	"sync/atomic"
 )
 
-// TCycle ..
-type TCycle struct {
+// Cycle ..
+type Cycle struct {
 	mu      *sync.Mutex
 	wg      *sync.WaitGroup
 	done    chan struct{}
@@ -17,8 +17,8 @@ type TCycle struct {
 }
 
 // NewCycle new a cycle life
-func NewCycle() *TCycle {
-	return &TCycle{
+func NewCycle() *Cycle {
+	return &Cycle{
 		mu:      &sync.Mutex{},
 		wg:      &sync.WaitGroup{},
 		done:    make(chan struct{}),
@@ -29,12 +29,12 @@ func NewCycle() *TCycle {
 }
 
 // Run a new goroutine
-func (c *TCycle) Run(fn func() error) {
+func (c *Cycle) Run(fn func() error) {
 	c.mu.Lock()
 	//todo add check options panic before waiting
 	defer c.mu.Unlock()
 	c.wg.Add(1)
-	go func(c *TCycle) {
+	go func(c *Cycle) {
 		defer c.wg.Done()
 		if err := fn(); err != nil {
 			c.quit <- err
@@ -43,9 +43,9 @@ func (c *TCycle) Run(fn func() error) {
 }
 
 // Done block and return a chan error
-func (c *TCycle) Done() <-chan struct{} {
+func (c *Cycle) Done() <-chan struct{} {
 	if atomic.CompareAndSwapUint32(&c.waiting, 0, 1) {
-		go func(c *TCycle) {
+		go func(c *Cycle) {
 			c.mu.Lock()
 			defer c.mu.Unlock()
 			c.wg.Wait()
@@ -56,13 +56,13 @@ func (c *TCycle) Done() <-chan struct{} {
 }
 
 // DoneAndClose ..
-func (c *TCycle) DoneAndClose() {
+func (c *Cycle) DoneAndClose() {
 	<-c.Done()
 	c.Close()
 }
 
 // Close ..
-func (c *TCycle) Close() {
+func (c *Cycle) Close() {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	if atomic.CompareAndSwapUint32(&c.closing, 0, 1) {
@@ -71,6 +71,6 @@ func (c *TCycle) Close() {
 }
 
 // Wait blocked for a life cycle
-func (c *TCycle) Wait() <-chan error {
+func (c *Cycle) Wait() <-chan error {
 	return c.quit
 }
