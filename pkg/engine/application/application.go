@@ -10,7 +10,7 @@ import (
 	"gitlab.casinovip.tech/minigame_backend/c_engine/pkg/utils/u_cycle"
 )
 
-type TApplication struct {
+type Application struct {
 	smu        *sync.RWMutex
 	initOnce   sync.Once
 	stopOnce   sync.Once
@@ -21,7 +21,7 @@ type TApplication struct {
 }
 
 // initialize application
-func (app *TApplication) initialize() {
+func (app *Application) initialize() {
 
 	app.initOnce.Do(func() {
 		//assign
@@ -39,13 +39,13 @@ func (app *TApplication) initialize() {
 	})
 }
 
-func (app *TApplication) Startup(fns ...func() error) error {
+func (app *Application) Startup(fns ...func() error) error {
 
 	return u_go.SerialUntilError(fns...)()
 }
 
 // parseFlags init
-func (app *TApplication) parseFlags() error {
+func (app *Application) parseFlags() error {
 	if app.isDisable(DisableParserFlag) {
 		// app.logger.Info("parseFlags disable", log.FieldMod(code.ModApp))
 		return nil

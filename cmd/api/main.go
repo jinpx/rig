@@ -1,22 +1,28 @@
 package main
 
 import (
-	"fmt"
+	"rig/internal/configuration"
+	"rig/internal/server"
 
-	"rig/pkg/utils/u_go"
-	"rig/pkg/utils/u_snowflake"
+	"gitlab.casinovip.tech/minigame_backend/c_engine/pkg"
 )
 
 func main() {
-	fmt.Println("api start.")
+	var (
+		eng = &app.ServerEngine{}
+	)
 
-	u_go.Go(func() {
-		fmt.Println("123")
-	})
+	pkg.SetName("game")
 
-	var count = 10
-	for i := 0; i < count; i++ {
-		fmt.Println(u_snowflake.SnowflakeIdStr())
+	if err := eng.Startup(
+		configuration.GetConfig,
+	); err != nil {
+		panic(err)
 	}
 
+	if err := eng.Run(
+		server.Biz(),
+	); err != nil {
+		panic(err)
+	}
 }
